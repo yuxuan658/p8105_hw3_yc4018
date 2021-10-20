@@ -84,5 +84,6 @@ instacart %>%
   knitr::kable()
 ```
 
-write a short description of the dataset, noting the size and structure of the data, describing some key variables, and giving illstrative examples of observations. 
+5. Dataset Interpretation: 
+ - The instacart dataset contains 1384617 observations of 15 variables and each row in the dataset is a product from an order, which helps to examine the trends in online grocery purchasing. The size of this dataset is (`r dim(instacart)`). The key variables I think are `aisle`; `department`; `product_name`; `add_to_cart_order`, which represents the order in which each product was added to cart; `reordered`, which shows if this product has been ordered by this user in the past; `order_dow`, which shows the day of the week on which the order was placed; `order_hour_of_day`,which represents the hour of the day on which the order was placed; and `days_since_prior_order`, which indicates the days since the last order.
 
