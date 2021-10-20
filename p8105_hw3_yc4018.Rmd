@@ -1,0 +1,43 @@
+---
+title: "p8105_hw3_yc4018"
+author: "Yuxuan Chen"
+output: github_document
+---
+```{r message = FALSE}
+library(tidyverse)
+library(p8105.datasets)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+ - Above code is for setting options of graphs
+
+**Problem 1**
+```{r collapse = TRUE}
+data("instacart")
+```
+
+1. 1. How many aisles are there, and which aisles are the most items ordered from?
+```{r}
+aisle_obs = 
+  instacart %>%
+  group_by(aisle) %>% 
+  summarize(n_obs = n()) %>% 
+  arrange(desc(n_obs))
+
+knitr::kable(aisle_obs)
+```
+ - There are `r nrow(aisle_obs)`in the dataset. Since `r aisle_obs[1,2]` is the largest observations of aisle, fresh vegetables is the aisle that the most items ordered from.
