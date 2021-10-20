@@ -56,3 +56,17 @@ aisle_obs %>%
     y = "Number of items"
   )
 ```
+
+3. Below table shows the 3 most popular products in each of the aisles of “baking ingredients”, “dog food care”, and “packaged vegetables fruits”, with the number of times each item is ordered.
+```{r}
+instacart %>% 
+  filter(aisle %in% c("baking ingredients", "dog food care","packaged vegetables fruits")) %>%
+  group_by(aisle, product_name) %>% 
+  summarize(n_times = n()) %>% 
+  mutate(
+    product_rank = min_rank(desc(n_times)) #rank the items from most popular to least popular
+  ) %>% 
+  filter(product_rank <= 3) %>% 
+  arrange(aisle, product_rank) %>% 
+  knitr::kable()
+```
