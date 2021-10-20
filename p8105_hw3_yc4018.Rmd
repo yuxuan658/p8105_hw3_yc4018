@@ -94,10 +94,11 @@ brfss_df =
   brfss_smart2010 %>% 
   janitor::clean_names() %>% #use appropriate variable names
   filter(topic == "Overall Health") %>%  # focus on Overall Health topic
-  separate(locationdesc, into = c("state", "location"), "-", convert = TRUE) %>%
+  separate(locationdesc, into = c("state", "location"), " - ", convert = TRUE) %>%
   select(-locationabbr) %>% 
   filter(response %in% c("Excellent", "Very good", "Good", "Fair", "Poor")) %>%
-  mutate(response = factor(response, levels = c("Poor", "Fair", "Good", "Very good", "Excellent"))) %>% view
+  mutate(response = factor(response, levels = c("Poor", "Fair", "Good", "Very good", "Excellent")))
+  
 ```
 
 1. In 2002, which states were observed at 7 or more locations? What about in 2010?
@@ -127,7 +128,7 @@ knitr::kable(brfss_2010)
 
  - The above datasets show the states that were observed at 7 or more locations in 2002 and 2010. Hence, in 2002, CT, FL, MA, NC, NJ, PA are the states that were observed at 7 or more locations. And in 2010, CA, CO, FL, MA, MD, NC, NE, NJ, NY, OH, PA, SC, TX, WA are the states that were observed at 7 or more locations.
 
-2. 1) Below is the dataset that is limited to `Excellent` responses, and contains year, state, and the averages of the `data_value` across locations within a state.
+2. 1)Below is the dataset that is limited to `Excellent` responses, and contains year, state, and the averages of the `data_value` across locations within a state.
 ```{r message = FALSE}
 brfss_excellent = 
   brfss_df %>% 
@@ -139,7 +140,7 @@ brfss_excellent =
 knitr::kable(brfss_excellent[0:5,]) 
 ```
 
-2) Below is the “spaghetti” plot of the averages of the `data_value` over time within a state. 
+2)Below is the “spaghetti” plot of the averages of the `data_value` over time within a state. 
 ```{r}
 brfss_excellent %>% 
   ggplot(aes(x = year, y = mean, color = state)) + 
@@ -152,3 +153,22 @@ brfss_excellent %>%
     caption = "Data from BRFSS dataset for 2002-2010"
   ) 
 ```
+
+3. Below is the two-panel plot showing the distribution of data value for responses (“Poor” to “Excellent”) among locations in NY State for the years 2006 and 2010.
+```{r}
+brfss_df %>% 
+  filter(
+    year == 2006 | year == 2010,
+    state == "NY"
+  ) %>% 
+  ggplot(aes(x = response, y = data_value, fill = response)) + 
+  geom_boxplot() +
+  facet_grid(. ~ year) + 
+  labs(
+    title = "Distribution of Data Value for Responses Among Locations in NY State",
+    x = "Level of Response",
+    y = "Data Value",
+    caption = "Data from BRFSS dataset for the years 2006 and 2010"
+  ) 
+```
+
