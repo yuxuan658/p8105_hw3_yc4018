@@ -58,7 +58,7 @@ aisle_obs %>%
 ```
 
 3. Below table shows the 3 most popular products in each of the aisles of “baking ingredients”, “dog food care”, and “packaged vegetables fruits”, with the number of times each item is ordered.
-```{r}
+```{r message = FALSE}
 instacart %>% 
   filter(aisle %in% c("baking ingredients", "dog food care","packaged vegetables fruits")) %>%
   group_by(aisle, product_name) %>% 
@@ -70,3 +70,19 @@ instacart %>%
   arrange(aisle, product_rank) %>% 
   knitr::kable()
 ```
+
+4. Below table shows the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week.
+```{r}
+instacart %>% 
+  filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) %>% 
+  group_by(product_name, order_dow) %>% 
+  summarize(mean_hour = mean(order_hour_of_day, na.rm = TRUE)) %>% 
+  pivot_wider(
+    names_from = "order_dow",
+    values_from = "mean_hour"
+  ) %>% 
+  knitr::kable()
+```
+
+write a short description of the dataset, noting the size and structure of the data, describing some key variables, and giving illstrative examples of observations. 
+
