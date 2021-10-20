@@ -84,6 +84,50 @@ instacart %>%
   knitr::kable()
 ```
 
-5. Dataset Interpretation: 
- - The instacart dataset contains 1384617 observations of 15 variables and each row in the dataset is a product from an order, which helps to examine the trends in online grocery purchasing. The size of this dataset is (`r dim(instacart)`). The key variables I think are `aisle`; `department`; `product_name`; `add_to_cart_order`, which represents the order in which each product was added to cart; `reordered`, which shows if this product has been ordered by this user in the past; `order_dow`, which shows the day of the week on which the order was placed; `order_hour_of_day`,which represents the hour of the day on which the order was placed; and `days_since_prior_order`, which indicates the days since the last order.
+5. **Dataset Interpretation: **
+write a short description of the dataset, noting the size and structure of the data, describing some key variables, and giving illstrative examples of observations. 
 
+ - The instacart dataset contains 1384617 observations of 15 variables and each row in the dataset is a product from an order, which helps to examine the trends in online grocery purchasing. The size of this dataset is (`r dim(instacart)`). I think the key variables are `aisle`; `department`; `product_name`; `add_to_cart_order`, which represents the order in which each product was added to cart; `reordered`, which shows if this product has been ordered by this user in the past; `order_dow`, which shows the day of the week on which the order was placed; `order_hour_of_day`,which represents the hour of the day on which the order was placed; and `days_since_prior_order`, which indicates the days since the last order.
+
+***
+**Problem 2**
+```{r warning = FALSE}
+data("brfss_smart2010")
+
+brfss_df = 
+  brfss_smart2010 %>% 
+  janitor::clean_names() %>% #use appropriate variable names
+  filter(topic == "Overall Health") %>%  # focus on Overall Health topic
+  separate(locationdesc, into = c("state", "location"), "-", convert = TRUE) %>%
+  filter(response %in% c("Excellent", "Very good", "Good", "Fair", "Poor")) %>%
+  mutate(response = factor(response, levels = c("Poor", "Fair", "Good", "Very good", "Excellent"))) %>% view
+```
+
+1. In 2002, which states were observed at 7 or more locations? What about in 2010?
+```{r message = FALSE}
+#In 2002:
+
+brfss_2002 = 
+  brfss_df %>% 
+  filter(year == 2002) %>%
+  select(state, location) %>%
+  group_by(state) %>% 
+  distinct(location, .keep_all = TRUE) %>%
+  summarize(n_location = n()) %>% 
+  filter(n_location >= 7) 
+
+knitr::kable(brfss_2002)
+
+#in 2010
+brfss_2010 = 
+  brfss_df %>% 
+  filter(year == 2010) %>%
+  select(state, location) %>%
+  group_by(state) %>% 
+  distinct(location, .keep_all = TRUE) %>%
+  summarize(n_location = n()) %>% 
+  filter(n_location >= 7) 
+
+knitr::kable(brfss_2010)
+```
+ - Hence, in 2002, `CT, FL, MA, NC, NJ, PA are the states that were observed at 7 or more locations. And in 2010, CA, CO, FL, MA, MD, NC, NE, NJ, NY, OH, PA, SC, TX, WA are the states that were observed at 7 or more locations.
