@@ -30,7 +30,7 @@ scale_fill_discrete = scale_fill_viridis_d
 data("instacart")
 ```
 
-1. 1. How many aisles are there, and which aisles are the most items ordered from?
+1. How many aisles are there, and which aisles are the most items ordered from?
 ```{r}
 aisle_obs = 
   instacart %>%
@@ -38,6 +38,21 @@ aisle_obs =
   summarize(n_obs = n()) %>% 
   arrange(desc(n_obs))
 
-knitr::kable(aisle_obs)
+knitr::kable(aisle_obs[0:10,])
 ```
  - There are `r nrow(aisle_obs)`in the dataset. Since `r aisle_obs[1,2]` is the largest observations of aisle, fresh vegetables is the aisle that the most items ordered from.
+
+2. Below is a scatter plot that shows the number of items ordered in each aisle, which with more than 10000 items ordered. 
+```{r}
+aisle_obs %>% 
+  filter(n_obs > 10000) %>% 
+  mutate(aisle = fct_reorder(aisle, n_obs)) %>% 
+  ggplot(aes(x = aisle, y = n_obs)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  labs(
+    title = "The Number of Items Ordered In Each Aisle",
+    x = "Aisle",
+    y = "Number of items"
+  )
+```
