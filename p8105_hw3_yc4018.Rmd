@@ -6,6 +6,7 @@ output: github_document
  - Code for setting options of graphs. 
 ```{r message = FALSE}
 library(tidyverse)
+library(patchwork)
 library(p8105.datasets)
 
 theme_set(theme_minimal() + theme(legend.position = "right"))
@@ -171,4 +172,79 @@ brfss_df %>%
     caption = "Data from BRFSS dataset for the years 2006 and 2010"
   ) 
 ```
+ - **interpretation!
+ 
+ wide range
+4. **Dataset Interpretation:**
+ - After loading, cleaning, and tidying the BRFSS data, I have a resulting dataset named `brfss_df` dataset. The `brfss_df` dataset is from the Behavioral Risk Factors Surveillance System for Selected Metropolitan Area Risk Trends (SMART) for 2002-2010, which contains 10625 observations of 23 variables. The dimension of this dataset is (`r dim(brfss_df)`). I think the key variables are: year, state, location, class, topic, question, and response. 
 
+***
+
+**Problem 3**
+
+1. Load and tidy the accelerometer data. 
+```{r message = FALSE}
+accel_df = read_csv("./data/accel_data.csv")
+
+accel_df = 
+  accel_df %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    activity_1:activity_1440,
+    names_to = "minute_in_a_day",
+    names_prefix = "activity.", #exclude the `activity.` prefix in each case
+    values_to = "activity_count"
+  ) %>% 
+  mutate(
+    type_of_day = if_else( day %in% c("Saturday", "Sunday" ), "weekend", "weekday"),
+    minute_in_a_day = as.numeric(minute_in_a_day),
+    ####day_id = as.numeric(day_id),
+    day = factor(day, levels = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")),
+    ) %>% 
+  relocate(week, day_id, day, type_of_day)
+```
+
+ - After loading, cleaning, and tidying the accelerometer data, I have a resulting dataset named `accel_df` dataset. The `accel_df` dataset is a five weeks of accelerometer data collected on a 63 year-old male with BMI 25, who was admitted to the Advanced Cardiac Care Center of Columbia University Medical Center and diagnosed with congestive heart failure (CHF). This dataset contains 50400 observations with 6 variables. The dimension of this dataset is (`r dim(accel_df)`). The variables included in this dataset are `week`, `day_id`, `day`, `minute_in_a_day`, `activity_count`, and `type_of_day`. The variable `week` shows the number of week; variable `day_id` indicates the unique number of each day; variable `day` indicates the day of the week; variable `minute_in_a_day` indicates the number of minute of a 24-hour day starting at midnight; variable `activity_count` indicates activity counts for each minute; and variable `type_of_day` indicates this day is a weekday or weekend. 
+
+2. Below is the table of the total activity count for each day.
+```{r}
+total_activity_df = 
+  accel_df %>% 
+  group_by(week, day_id, day) %>% 
+  summarize(
+    total_activity_count = sum(activity_count)
+  ) 
+knitr::kable(total_activity_df)
+
+gg_day_activity = 
+  total_activity_df %>% 
+  ggplot(aes(x = day, y = total_activity_count, group = week, color = week)) + 
+  geom_point(alpha = .5) +
+  geom_line() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  labs(
+    #title = "Distribution of Total Activity Count in Each Day Per Week",
+    x = "Day",
+    y = "Total Activity Count in Each Day",
+  ) 
+
+gg_dayid_activity = 
+  total_activity_df %>% 
+  ggplot(aes(x = day_id, y = total_activity_count, color = week)) + 
+  geom_point() +
+  geom_line() +
+  labs(
+    #title = "Distribution of Total Activity Count in Each Day",
+    x = "Day id",
+    y = "Total Activity Count in Each Day",
+  ) 
+
+(gg_dayid_activity + gg_day_activity) + 
+  plot_annotation(title = "Distribution of Total Activity Count") & 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+- Since traditional analyses of accelerometer data focus on the total activity over the day, I drew two plots above. The left plot simply shows the distribution of total activity count in each day; and on the right plot, I grouped the day by week, and the plot shows the distribution of total activity count in each day based on week for 5 weeks. 
+ - Based on two plots above, the total activity count fluctuates and oscillates up and down, but roughly spread around 3.5*10^5 counts for each day. In first 2 weeks, total activity count on Monday is lower than that on Friday; but in the rest of three weeks, total activity count on Monday has larger value than on Friday. The total activity count always increasing from Tuesday to Wednesday. Saturday has high total activity count for first three weeks, but become 0 on the last two weeks.    
+ 
+ 
