@@ -247,4 +247,17 @@ gg_dayid_activity =
 - Since traditional analyses of accelerometer data focus on the total activity over the day, I drew two plots above. The left plot simply shows the distribution of total activity count in each day; and on the right plot, I grouped the day by week, and the plot shows the distribution of total activity count in each day based on week for 5 weeks. 
  - Based on two plots above, the total activity count fluctuates and oscillates up and down, but roughly spread around 3.5*10^5 counts for each day. In first 2 weeks, total activity count on Monday is lower than that on Friday; but in the rest of three weeks, total activity count on Monday has larger value than on Friday. The total activity count always increasing from Tuesday to Wednesday. Saturday has high total activity count for first three weeks, but become 0 on the last two weeks.    
  
- 
+3. Below is a single-panel plot that shows the 24-hour activity time courses for each day for 5 weeks. 
+```{r}
+accel_df %>% 
+  group_by(minute_in_a_day, day_id) %>% 
+  ggplot(aes(x = minute_in_a_day, y = activity_count, color = day)) +
+  geom_line(alpha = .5) +
+  labs(
+    title = "24-hour Activity Time Courses For Each Day For 5 Weeks",
+    x = "Minute of The Day",
+    y = "Activity Count",
+  ) 
+```
+
+ - Since accelerometer data allows the inspection activity over the course of the day. Based on the above plot of 24-hour activity time courses for each day for 5 weeks, we can see that the activity counts are small on the early morning; around the 250 minute of the  day, the activity counts start increasing to around 2400 and stay for the rest of the day; on the evening, activity count has a rapidly growth which is starting from the 1200 minute of the day, then becomes decreasing at around 1300 minute of the day. Saturday has the high activity count on the early morning. During the week, the activity count has the highest value at the evening of the most of the days. 
